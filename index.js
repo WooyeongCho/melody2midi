@@ -2,8 +2,8 @@ const { Essentia, EssentiaWASM } = require("essentia.js");
 const MidiWriter = require('midi-writer-js');
 const fs = require("fs");
 
-const extract = async (selectedFile, outputFileName) => {
-  console.log(`Analysis Started...\nSelected File: ${selectedFile}\nOutput File Name: ${outputFileName}`);
+const extract = async (selectedFile) => {
+  console.log(`[M2M] Analysis Started....\nSelected File: ${selectedFile}`);
   
   const decodeModule = await import("audio-decode");
   const decode = decodeModule.default;
@@ -71,8 +71,14 @@ const extract = async (selectedFile, outputFileName) => {
   const write = new MidiWriter.Writer(track);
 
 
-  fs.writeFileSync(outputFileName, write.buildFile(), 'binary');
-  console.log('Analysis Completed, file created.');
+  //fs.writeFileSync(outputFileName, write.buildFile(), 'binary');
+  console.log('[M2M] Analysis Completed');
+  return new Promise((resolve, reject) => {
+    const midiBinaryData = write.buildFile();
+
+    // 성공적으로 완료되었을 때 resolve를 호출하고 MIDI 바이너리 데이터 전달
+    resolve(midiBinaryData);
+  });
 };
 
 module.exports = { extract };
