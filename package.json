@@ -1,24 +1,27 @@
 {
-  "name": "beatmatch",
+  "name": "melody2midi",
   "version": "1.0.0",
-  "description": "",
+  "description": "Extract the main melody from an audio file to a midi file.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/WooyeongCho/BeatMatch.git"
+    "url": "git+https://github.com/WooyeongCho/melody2midi.git"
   },
   "author": "Soundware",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/WooyeongCho/BeatMatch/issues"
+    "url": "https://github.com/WooyeongCho/melody2midi/issues"
   },
-  "homepage": "https://github.com/WooyeongCho/BeatMatch#readme",
+  "homepage": "https://github.com/WooyeongCho/melody2midi#readme",
   "dependencies": {
     "audio-decode": "^2.1.3",
     "essentia.js": "^0.1.3",
     "midi-writer-js": "^2.1.4"
+  },
+  "directories": {
+    "example": "example"
   }
 }
