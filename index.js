@@ -1,25 +1,47 @@
 const { Essentia, EssentiaWASM } = require("essentia.js");
 const MidiWriter = require('midi-writer-js');
 const fs = require("fs");
+const essentia = new Essentia(EssentiaWASM);
 
-const extract = async (selectedFile) => {
-  console.log(`[M2M] Analysis Started....\nSelected File: ${selectedFile}`);
-  
+const extractKey = async (selectedFile) => {
+  console.log(`[M2M] KEY Analysis Started....\nSelected File: ${selectedFile}`);
+
   const decodeModule = await import("audio-decode");
   const decode = decodeModule.default;
-  const essentia = new Essentia(EssentiaWASM);
-  const hopSize = 256;
-  const track = new MidiWriter.Track();
-
-  track.addEvent(new MidiWriter.ProgramChangeEvent({ instrument: 1 }));
   
-
-  // 오디오 디코드
   const decodeAudio = async (filepath) => {
     const buffer = fs.readFileSync(filepath);
     const audio = await decode(buffer);
     return { audioData: essentia.arrayToVector(audio._channelData[0]), sampleRate: audio.sampleRate };
   };
+
+  const audioObj = (await decodeAudio(selectedFile)) // 디코딩된 오디오
+  
+
+  return new Promise((resolve, reject) => {
+    const extractedKey = essentia.KeyExtractor(audioObj.audioData);
+
+    // 성공적으로 완료되었을 때 resolve를 호출하고 추출된 키 전달
+    resolve(extractedKey);
+  });
+}
+
+const extractMIDI = async (selectedFile) => {
+  console.log(`[M2M] MIDI Analysis Started....\nSelected File: ${selectedFile}`);
+  
+  const decodeModule = await import("audio-decode");
+  const decode = decodeModule.default;
+
+  const decodeAudio = async (filepath) => {
+    const buffer = fs.readFileSync(filepath);
+    const audio = await decode(buffer);
+    return { audioData: essentia.arrayToVector(audio._channelData[0]), sampleRate: audio.sampleRate };
+  };
+  
+  const hopSize = 256;
+  const track = new MidiWriter.Track();
+
+  track.addEvent(new MidiWriter.ProgramChangeEvent({ instrument: 1 }));
 
   // 주요 멜로디 추출
   const extractPredominantMelody = (audioData, sampleRate) => {
@@ -81,4 +103,4 @@ const extract = async (selectedFile) => {
   });
 };
 
-module.exports = { extract };
+module.exports = { extractMIDI, extractKey };
